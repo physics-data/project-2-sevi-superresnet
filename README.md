@@ -1,5 +1,5 @@
 # SEVI 第二阶段大作业
-
+[toc]
 # 初步尝试
 
 将第二类数据集的每个球壳(能级)的电子找出来, 复原为图像, 从图像中识别分布信息
@@ -43,14 +43,18 @@ def loss_func(input,label):
 由于训练过程较长, epoch较多, 训练过程并未保存完全, 大致情况为: 
 
 resnet18: 
+
 训练所需epoch较多, 在50个epoch之后loss偶有下降到0.01以下, 200个epoch后能下降到1e-5以下
+
 resnet34,101:
+
 100个epoch不能看出明显下降, 故放弃训练
 
 
 ## 设备信息
 
 显卡: A100-SXM4-40GB 
+
 Cpu: AMD EPYC 7302 16-Core Processor
 
 训练时长: > 1min/epoch
