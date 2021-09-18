@@ -7,3 +7,4 @@ test.ipynb
 __pycache__
 data/valid_loss
 data/train_loss
+param
