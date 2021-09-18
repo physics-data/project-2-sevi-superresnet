@@ -101,7 +101,7 @@ def train(model, optimizer, dataloader, testdataloader, max_epochs=1, start_epoc
         plt.plot(loss_list)
         tmp = np.array(loss_list)
         print(np.mean(tmp), '|', np.sqrt(np.var(tmp)))
-        plt.savefig(f"loss_pic{model_idx}/loss{epochs}.png")
+        plt.savefig(f"figures/loss_pic/loss_pic{model_idx}/loss{epochs}.png")
         plt.show()
         plt.cla()
 
