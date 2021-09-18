@@ -7,13 +7,12 @@ import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
 from torch.nn import functional as F
 import matplotlib.pyplot as plt
-# from model import *
 
 
 class sevidataset(Dataset):
     def __init__(self, inputs, labels):
         print("preparing dataset")
-        self.inputs = torch.Tensor(inputs)  # .permute(0,2,1)
+        self.inputs = torch.Tensor(inputs)  
         self.labels = torch.Tensor(labels)
         assert len(self.inputs) == len(
             self.labels), "lens of inputs & labels are not same."
@@ -36,15 +35,15 @@ class sevidataset(Dataset):
 
 
 def eval(model, dataloader):
-
     loss_list = []
     with torch.no_grad():
         model.eval()
         criterion = loss_func
-
         with tqdm(total=len(dataloader)) as t:
             t.set_description("@test")
             for step, batch in enumerate(dataloader):
+                batch['inputs'] = batch['inputs'].cuda()
+                batch['labels'] = batch['labels'].cuda()
 
                 predict = model(batch['inputs'].unsqueeze(
                     1).cuda()).reshape(-1, 2, 12)
@@ -56,8 +55,10 @@ def eval(model, dataloader):
 
                 loss_list.append(loss.item())
 
+                batch['inputs'] = batch['inputs'].cpu()
+                batch['labels'] = batch['labels'].cpu()
     tmp = np.array(loss_list)
-    print(np.mean(tmp), '|', np.sqrt(np.var(tmp)))
+    print(np.mean(tmp),'|',np.sqrt(np.var(tmp)))
 
 
 def loss_func(input, label):
@@ -75,13 +76,11 @@ def train(model, optimizer, dataloader, testdataloader, max_epochs=1, start_epoc
     loss_list = []
     while (epochs < max_epochs):
         model.train()
-        tr_loss = 0.0
-        global_step = 0
         epochs += 1
-
         with tqdm(total=len(dataloader)) as t:
             for step, batch in enumerate(dataloader):
-
+                batch['inputs'] = batch['inputs'].cuda()
+                batch['labels'] = batch['labels'].cuda()
                 t.set_description(
                     f"{model_idx},Epoch {epochs+start_epoch},{epochs}/{max_epochs}")
 
@@ -98,10 +97,13 @@ def train(model, optimizer, dataloader, testdataloader, max_epochs=1, start_epoc
                 loss_list.append(loss.item())
                 optimizer.step()
 
+                batch['inputs'] = batch['inputs'].cpu()
+                batch['labels'] = batch['labels'].cpu()
+
         plt.plot(loss_list)
         tmp = np.array(loss_list)
-        print(np.mean(tmp), '|', np.sqrt(np.var(tmp)))
-        plt.savefig(f"figures/loss_pic/loss_pic{model_idx}/loss{epochs}.png")
+        print(np.mean(tmp),'|',np.sqrt(np.var(tmp)))
+        plt.savefig(f"pic/loss_pic{model_idx}/loss{epochs+start_epoch}.png")
         plt.show()
         plt.cla()
 
@@ -109,17 +111,27 @@ def train(model, optimizer, dataloader, testdataloader, max_epochs=1, start_epoc
         loss_list = []
 
 
-idx_of_gen_traindata = 10
-inputs = []
-labels = []
-for i in range(0, 13):
-    with h5py.File(f'data/dataset_double{i}.h5', 'r') as gen_data:
-        inputs.append(np.array(gen_data['inputs']))
-        labels.append(np.array(gen_data['labels']))
-inputs = np.concatenate(inputs, axis=0)
-labels = np.concatenate(labels, axis=0)
-print(f'total_data_len: {len(inputs)}')
 
+inputs_train = []
+labels_train = []
+for i in [3,4,5,6,7,8,9,10]:#,10,11,12,13,14,15,16,17,18,19]:
+    with h5py.File(f'data/dataset_my_double{i}.h5', 'r') as gen_data:
+        inputs_train.append(np.array(gen_data['inputs']))
+        labels_train.append(np.array(gen_data['labels']))
+inputs_train = np.concatenate(inputs_train, axis=0)
+labels_train = np.concatenate(labels_train, axis=0)
+print(f'train_len: {len(inputs_train)}')
+
+inputs_valid = []
+labels_valid = []
+for i in [0,1,2]:
+    with h5py.File(f'data/dataset_my_double{i}.h5', 'r') as gen_data:
+        # print(f'data/train{idx_of_gen_validdata}_ele_info.h5')
+        inputs_valid.append(np.array(gen_data['inputs']))
+        labels_valid.append(np.array(gen_data['labels']))
+inputs_valid = np.concatenate(inputs_valid, axis=0)
+labels_valid = np.concatenate(labels_valid, axis=0)
+print(f'valid_len: {len(inputs_valid)}')
 
 model_dict = {
     18: resnet18,
@@ -128,43 +140,43 @@ model_dict = {
     101: resnet101
 }
 
-model_idx = 18
+model_idx = 34
 
-model = model_dict[model_idx](pretrained=True)
+model = model_dict[model_idx](pretrained=False)
 model.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3,
                         bias=False)
 model.fc = nn.Linear(512, 24)
 
 
 # 读取训练数据
-param_save_dir = f'param/resnet_double{model_idx}.pth'
+param_save_dir = f'param/resnet_my_double{model_idx}.pth'
 
-checkpoint = torch.load(param_save_dir)  # c
+checkpoint = torch.load(param_save_dir)#
 
-model.load_state_dict(checkpoint['model'])  # c
+model.load_state_dict(checkpoint['model'])#
 model.cuda()
 
 optimizer = torch.optim.Adam(model.parameters(), lr=0.08)
-optimizer.load_state_dict(checkpoint['optimizer'])  # c
+optimizer.load_state_dict(checkpoint['optimizer'])#
 
 max_epoch = 1
-start_epoch = checkpoint['epoch']  # c
+start_epoch = checkpoint['epoch']#
 # start_epoch = 0#
 end_epoch = start_epoch + max_epoch
 
 
-dataset = sevidataset(inputs[:int(len(inputs)/10*9)],
-                      labels[:int(len(inputs)/10*9)])
-testdataset = sevidataset(
-    inputs[int(len(inputs)/10*9):], labels[int(len(inputs)/10*9):])
-dataset.cuda()
-testdataset.cuda()
+dataset = sevidataset(inputs_train, labels_train)
+validdataset = sevidataset(inputs_valid, labels_valid)
+# dataset.cuda()
+# validdataset.cuda()
 
 dataloader = DataLoader(dataset, batch_size=8, shuffle=True)
-testdataloader = DataLoader(testdataset, batch_size=5, shuffle=False)
+validdataloader = DataLoader(validdataset, batch_size=5, shuffle=False)
 
 
-train(model, optimizer, dataloader, testdataloader, max_epoch, start_epoch)
+train(model, optimizer, dataloader, validdataloader, max_epoch, start_epoch)
 state = {'model': model.state_dict(), 'optimizer': optimizer.state_dict(),
          'epoch': end_epoch}
 torch.save(state, param_save_dir)
+# eval(model,dataloader)
+# print(labels.count(0)/len(labels))
