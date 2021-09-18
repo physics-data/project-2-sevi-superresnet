@@ -9,12 +9,12 @@ import math
 from tqdm import tqdm
 
 
-def detect_center_points(FinalImage):
+def detect_center_points(FinalImage,start_,end_):
 
     number_list = np.arange(0, 1024)
     z_grid, x_grid = np.meshgrid(number_list, number_list)
     final_count = np.zeros((1024, 1024))
-    for j in tqdm(list(range(len(FinalImage)))[10000:15000]):
+    for j in tqdm(list(range(len(FinalImage)))[start_:end_]):
         image = FinalImage[j][1]
 
         left_roll = np.roll(image, 1, axis=1)
