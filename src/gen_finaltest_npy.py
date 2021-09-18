@@ -17,7 +17,7 @@ end_ = int(end_)
 
 finaltest_filename = "data/finaltest.h5"
 
-output_path = "finaltest_npy/"
+output_path = "data/finaltest_npy/"
 output_file_name = "final_{}_{}_retry.npy"
 
 if not os.path.exists(output_path):
