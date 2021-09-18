@@ -1,14 +1,15 @@
 import threading
 import h5py
 import matplotlib.pyplot as plt
+from torch.utils import data
 from tqdm import tqdm
 import numpy as np
 from tqdm import tqdm
 import os
 import sys
 
-index_, data_len = sys.argv[1:]
-index_ = int(index_)
+index_, data_len, data_type = [int(i) for i in sys.argv[1:]]
+
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 parent_dir_path = os.path.abspath(os.path.join(dir_path, os.pardir))
@@ -16,23 +17,20 @@ sys.path.insert(0, parent_dir_path)
 
 from util import gen_my_pic_double
 
-output_path = 'data/traindata/'
+output_path_train = 'data/traindata/'
+output_path_valid = 'data/validdata/'
+if data_type == 0:
+    output_path = output_path_train
+elif data_type == 1:
+    output_path = output_path_valid
+else:
+    print("data_type should be 0 or 1.")
+    exit(1)
+    
 if not os.path.exists(output_path):
     os.mkdir(output_path)
 
 output_name = 'dataset_my_double{}.h5'
-
-
-# class myThread (threading.Thread):
-#     def __init__(self, index, total_len):
-#         threading.Thread.__init__(self)
-#         self.index = index
-#         self.total_len = total_len
-
-#     def run(self):
-#         print("开始生成数据：" + (output_path+output_name).format(self.index))
-#         gen_my_beta_dist(self.index, self.total_len)
-#         print("生成完毕：" + (output_path+output_name).format(self.index))
 
 
 # 分布参数
@@ -65,9 +63,6 @@ def gen_random(mean, scale, lim):
 
 def gen_my_beta_dist(index, total_len=200):
 
-    # print(f'数据: {index},数据长度: {total_len}')
-
-    # 生成分布,500个需1小时
     r_list = []
     label_list = []
     pic_list = []
@@ -84,7 +79,6 @@ def gen_my_beta_dist(index, total_len=200):
         r = np.array([min(r1, r2), max(r1, r2)], dtype=np.float64)
         label = np.array([beta1[1:], beta2[1:]], dtype=np.float64)
 
-        # print(label)
 
         pic1 = gen_my_pic_double.gen_pic(
             beta1, r[0], np.random.uniform(0.005, 0.009))
@@ -100,16 +94,6 @@ def gen_my_beta_dist(index, total_len=200):
         out['Rs'] = r_list
         out['labels'] = label_list
 
-
-# thread_num = end_ - start_
-# 
-# thread_list = []
-# for i in range(start_, end_):
-#     t = myThread(i, int(data_len))
-#     thread_list.append(t)
-#     t.start()
-# for t in thread_list:
-#     t.join()
 print(f'开始生成: {output_name.format(index_)}')
-gen_my_beta_dist(index_, int(data_len))
+gen_my_beta_dist(index_, data_len)
 print(f'结束生成: {output_name.format(index_)}')

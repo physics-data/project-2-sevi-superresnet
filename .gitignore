@@ -1,5 +1,7 @@
-util/__pycache__
+# util/__pycache__
 data/*.h5
 data/finaltest_npy
 data/traindata
+data/validdata
 test.ipynb
+__pycache__

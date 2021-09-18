@@ -1,17 +1,8 @@
-
-# from torch.optim import optimizer
-# from tqdm import tqdm
-# import h5py
-# import numpy as np
-# import torch
-# import torch.nn as nn
-
-# from torch.nn import functional as F
-# import matplotlib.pyplot as plt
 from sevi_dataset import get_dataloader
-from model import get_model,save_model
+from model import get_model, save_model
 from train_func import train
 import sys
+import os
 
 
 model_idx, max_epoch, train_batch_size, eval_batch_size = [
@@ -19,15 +10,19 @@ model_idx, max_epoch, train_batch_size, eval_batch_size = [
 
 if __name__ == '__main__':
     # 超参数
-    learning_rate = 0.5
+    learning_rate = 0.1
 
     # 读取训练集
-    data_path = r'./data/traindata/'
-    train_dataloader, valid_dataloader = get_dataloader(8, 1, 2, data_path)
+    traindata_path = r'./data/traindata/'
+    validdata_path = r'./data/validdata/'
+    train_dataloader, valid_dataloader = get_dataloader(
+        train_batch_size, eval_batch_size,  traindata_path, validdata_path)
 
     # 获取模型及加载训练参数
 
     param_save_dir = f'./param/'
+    if not os.path.exists(param_save_dir):
+        os.makedirs(param_save_dir)
     param_save_name = f'resnet_my_double{model_idx}.pth'
     param_save_path = param_save_dir+param_save_name
     model, optimizer, start_epoch, end_epoch = get_model(
@@ -41,4 +36,3 @@ if __name__ == '__main__':
     state = {'model': model.state_dict(), 'optimizer': optimizer.state_dict(),
              'epoch': end_epoch}
     save_model(state, param_save_path)
-

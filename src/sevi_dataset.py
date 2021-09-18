@@ -38,13 +38,13 @@ def get_dataname(data_path=r'./data/traindata/'):
     return dataname
 
 
-def get_dataset(data_path, train_data_names, valid_data_names):
+def get_dataset(traindata_path, validdata_path, train_data_names, valid_data_names):
     '''读取数据集'''
 
     inputs_train = []
     labels_train = []
     for dataname in train_data_names:
-        with h5py.File(data_path+dataname, 'r') as gen_data:
+        with h5py.File(traindata_path+dataname, 'r') as gen_data:
             inputs_train.append(np.array(gen_data['inputs']))
             labels_train.append(np.array(gen_data['labels']))
     inputs_train = np.concatenate(inputs_train, axis=0)
@@ -54,7 +54,7 @@ def get_dataset(data_path, train_data_names, valid_data_names):
     inputs_valid = []
     labels_valid = []
     for dataname in valid_data_names:
-        with h5py.File(data_path+dataname, 'r') as gen_data:
+        with h5py.File(validdata_path+dataname, 'r') as gen_data:
             inputs_valid.append(np.array(gen_data['inputs']))
             labels_valid.append(np.array(gen_data['labels']))
     inputs_valid = np.concatenate(inputs_valid, axis=0)
@@ -63,15 +63,18 @@ def get_dataset(data_path, train_data_names, valid_data_names):
     return inputs_train, labels_train, inputs_valid, labels_valid
 
 
-def get_dataloader(train_batch_size=8, valid_batch_size=5, train_data_len=2, data_path=r'./data/traindata/'):
+def get_dataloader(train_batch_size=8, valid_batch_size=5, traindata_path=r'./data/traindata/', validdata_path=r'./data/validdata/'):
 
-    data_names = get_dataname(data_path)
+    traindata_names = get_dataname(traindata_path)
+    validdata_names = get_dataname(validdata_path)
     inputs_train, labels_train, inputs_valid, labels_valid = get_dataset(
-        data_path, data_names[0:train_data_len], data_names[train_data_len:])
+        traindata_path, validdata_path, traindata_names, validdata_names)
 
     train_dataset = sevi_dataset(inputs_train, labels_train)
     valid_dataset = sevi_dataset(inputs_valid, labels_valid)
-    train_dataloader = DataLoader(train_dataset, batch_size=train_batch_size, shuffle=True)
-    valid_dataloader = DataLoader(valid_dataset, batch_size=valid_batch_size, shuffle=False)
+    train_dataloader = DataLoader(
+        train_dataset, batch_size=train_batch_size, shuffle=True)
+    valid_dataloader = DataLoader(
+        valid_dataset, batch_size=valid_batch_size, shuffle=False)
 
-    return train_dataloader,valid_dataloader
+    return train_dataloader, valid_dataloader
