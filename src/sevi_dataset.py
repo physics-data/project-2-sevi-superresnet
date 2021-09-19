@@ -29,6 +29,33 @@ class sevi_dataset(Dataset):
         for key in self.tensor:
             self.tensor[key] = self.tensor[key].cpu()
 
+class gauss_dataset(Dataset):
+    def __init__(self, inputs, labels):
+        print("preparing dataset")
+        self.inputs = torch.Tensor(inputs).unsqueeze(1)
+        self.labels = torch.Tensor(labels)
+        assert len(self.inputs) == len(
+            self.labels), "lens of inputs & labels are not same."
+        self.tensor = {'inputs': self.inputs, 'labels': self.labels}
+        print("finished")
+
+    def __len__(self):
+        return len(self.inputs)
+
+    def __getitem__(self, index):
+        return {key: data[index] for key, data in self.tensor.items()}
+
+    def cuda(self):
+        for key in self.tensor:
+            self.tensor[key] = self.tensor[key].cuda()
+
+    def cpu(self):
+        for key in self.tensor:
+            self.tensor[key] = self.tensor[key].cpu()
+
+
+
+
 
 def get_dataname(data_path=r'./data/traindata/'):
     assert os.path.exists(data_path), "训练集不存在"
