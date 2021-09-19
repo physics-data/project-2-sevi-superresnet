@@ -92,7 +92,7 @@ def gen_my_beta_dist(index, total_len=200):
             beta1.append(gen_random(mu1[i], sigma1[i], limit1[i]))
         beta2 = [0.5]
         for i in range(12):
-            beta2.append(gen_random(mu1[i], sigma1[i], limit1[i]))
+            beta2.append(gen_random(mu2[i], sigma2[i], limit2[i]))
         r1 = np.random.uniform(0.45, 0.55)
         r2 = np.random.uniform(0.75, 0.85)
 
