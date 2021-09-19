@@ -44,7 +44,7 @@ def gen_pic(b_ij, R_in, sigma_R):
     for i in range(total_num):
         pic[x_pixel[i]][z_pixel[i]] += 1
 
-    pic = pic/total_num*255
+    # pic = pic/total_num*255
     # plt.imshow(pic, cmap=plt.cm.binary)
     # plt.savefig("1.png")
     return pic

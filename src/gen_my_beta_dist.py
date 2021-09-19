@@ -84,7 +84,8 @@ def gen_my_beta_dist(index, total_len=200):
             beta1, r[0], np.random.uniform(0.005, 0.009))
         pic2 = gen_my_pic_double.gen_pic(
             beta2, r[1], np.random.uniform(0.005, 0.009))
-        pic = (pic1+pic2)/2
+        pic = (pic1+pic2)
+        pic = pic/pic.sum()*255
 
         r_list.append(r)
         label_list.append(label)

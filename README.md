@@ -2,11 +2,63 @@
 [toc]
 # 复现形式
 
-## 处理finaltest.h5
+1. 处理finaltest.h5
+   - 将`finaltest.h5`放于data根目录下
+   - 运行
+        ```shell
+        bash script/gen_finaltest_answer.sh
+        ```
+   - 将在`data/finaltest_npy`目录下生成.npy文件, 是处理后的测试集
+   - 运行时间约为**40min**
 
-- 运行`gen_finaltest_pic.sh`
 
-## 
+2. 生成pretraining训练集
+	- 运行
+  		```shell
+		bash script/gen_traindata_pretraining.sh
+		```
+	- 默认为**10**个进程, 可以根据性能调整for循环参数
+	- 将生成**data/traindata**和**data/valid_data**目录存放训练和验证集
+	- 运行时间约为**1h**
+	- 默认参数需要**40G**空间
+
+
+3. 开始预训练模型
+   	- **运行前建议调整python第二个参数(epoch个数)**, 默认为100
+   	- **运行前必须根据设备显卡数调整第一行参数,**
+	- 运行
+		```shell
+		bash script/run_model.sh
+		```
+		将开始训练模型
+	- 模型将loss平均值和标准差数据以.npy文件存在`data/train_loss`和`data/valid_loss`目录中, **可以通过`final.ipynb`文件查看loss曲线**
+	- 每次重新运行会读取上次的参数, 模型参数保存在`param`目录中
+	- **100**个epoch需要**4h**
+	- 显卡内存需要**10G**左右, 若不足, 可以调小python后两个参数
+
+4. 生成fine-tuning训练集
+	- 与生成pretraining训练集几乎一样
+	- 将覆盖pretraining训练集
+	- 运行
+  		```shell
+		bash script/gen_traindata_fine_tuning.sh
+		```
+	- 运行时间约为**1h**
+
+5. fine-tuning
+
+	- 与开始预训练模型完全一样
+	- 建议训练**40**个epoch
+
+6. 生成答案
+
+	- 运行
+		```shell
+		bash script/gen_finaltest_answer.sh
+		```
+	- 可以调整python第二个参数选取不同阶段的模型参数(需要自己备份参数,否则只有一个)
+	- 在根目录下生成`final.h5`文件, 用作提交
+	
 
 
 # 计算结果, 第一次提交 v3.0
