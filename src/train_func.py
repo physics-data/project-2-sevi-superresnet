@@ -8,7 +8,7 @@ import h5py
 
 
 def loss_func(input, label):
-
+    '''自定义loss函数'''
     rate = 2/(np.array(range(1, 13))*4+1)
     rate = torch.Tensor(rate).cuda()
     delta = input - label
@@ -17,6 +17,7 @@ def loss_func(input, label):
 
 
 def eval(model, dataloader):
+    '''评估'''
     loss_file_mean = np.array([],dtype=np.float64)
     loss_file_sigma = np.array([],dtype=np.float64)
 
@@ -68,7 +69,7 @@ def eval(model, dataloader):
 
 def train(model, model_idx, optimizer, dataloader, validdataloader, max_epochs=1, start_epoch=0):
     
-
+    '''训练'''
     epochs = 0
     criterion = loss_func
     loss_list = []
@@ -109,7 +110,7 @@ def train(model, model_idx, optimizer, dataloader, validdataloader, max_epochs=1
 
         eval(model, validdataloader)
         loss_list = []
-
+        # 保存loss数据
         loss_data_dir = './data/train_loss/'
         loss_data_filename = 'tain_loss.npy'
         loss_data_path = loss_data_dir+loss_data_filename

@@ -16,7 +16,6 @@ def gen_pic(b_ij, R_in, sigma_R):
     R_in: 半径
     sigma_R: 半径标准差
 
-    
     '''
     pixel = 1024
     total_num = int(np.random.uniform(1800000, 2500000))
@@ -24,10 +23,10 @@ def gen_pic(b_ij, R_in, sigma_R):
         len(b_ij)-1)+1, np.zeros(len(b_ij)-1))
     c = np.polynomial.legendre.legint(Legendre_poly, lbnd=-1)
 
-    def abcd(x):
+    def legendre_(x):
         return np.polynomial.legendre.legval(x, c)
     sample = np.linspace(-1, 1, num=1000000)
-    b = abcd(sample)
+    b = legendre_(sample)
     r1 = np.random.random(total_num)
     cos_theta = np.interp(r1, b, sample)
 
@@ -44,7 +43,4 @@ def gen_pic(b_ij, R_in, sigma_R):
     for i in range(total_num):
         pic[x_pixel[i]][z_pixel[i]] += 1
 
-    # pic = pic/total_num*255
-    # plt.imshow(pic, cmap=plt.cm.binary)
-    # plt.savefig("1.png")
     return pic

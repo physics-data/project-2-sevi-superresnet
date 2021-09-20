@@ -50,9 +50,6 @@ def gen_gauss_traindata(filename, pic_len, n=2, random_num=1, near_random_num=1)
             left = x_z_all[:, 1] - n
             right = x_z_all[:, 1] + n + 1
 
-            # image_list = np.zeros(
-            #     (len(x_z_all), 2*n+1, 2*n+1))
-            # if_list = np.zeros(len(x_z_all), dtype=np.int32)
             for j in range(len(x_z_all)):
                 if image[x_z_all[j][0]][x_z_all[j][1]] >70:
                     image_all.append(image[up[j]:down[j], left[j]:right[j]])
@@ -61,8 +58,6 @@ def gen_gauss_traindata(filename, pic_len, n=2, random_num=1, near_random_num=1)
                     else: 
                         if_all.append(0)
 
-            # image_all.append(image_list)
-            # if_all.append(if_list)
         image_all = np.array(image_all)
         if_all = np.array(if_all,dtype=np.int32)
         print(len(image_all),len(if_all))

@@ -17,6 +17,7 @@ import os
 
 
 class gauss_model(nn.Module):
+    '''cnn模型'''
     def __init__(self,):
         super(gauss_model, self).__init__()
         self.feature1 = 64
@@ -79,7 +80,7 @@ class gauss_model(nn.Module):
 
 
 def f1(label, predict):
-
+    '''计算f1loss'''
     TP = 0
     FP = 0
     FN = 0
@@ -99,7 +100,7 @@ def f1(label, predict):
 
 
 def eval(model, dataloader):
-
+    '''评估'''
     predict_all = []
     labels_all = []
 
@@ -120,14 +121,7 @@ def eval(model, dataloader):
                 predict_all.append(predict.detach().cpu())
                 labels_all.append(labels.detach().cpu())
 
-                # true += torch.sum(prediction == labels).item()
-                # all += labels.shape[0]
-                # loss = criterion(predict, labels)
-
-                # t.set_postfix(loss=loss.item())
                 t.update(1)
-
-                # loss_list.append(loss.item())
 
                 batch['inputs'] = batch['inputs'].cpu()
                 batch['labels'] = batch['labels'].cpu()
@@ -140,7 +134,7 @@ def eval(model, dataloader):
 
 
 def train(model, optimizer, dataloader, validdataloader, max_epochs=1, start_epoch=0):
-
+    '''训练'''
     epochs = 0
     criterion = nn.BCELoss()
     loss_list = []
@@ -171,18 +165,12 @@ def train(model, optimizer, dataloader, validdataloader, max_epochs=1, start_epo
                 batch['inputs'] = batch['inputs'].cpu()
                 batch['labels'] = batch['labels'].cpu()
 
-        # plt.plot(loss_list)
+
         tmp = np.array(loss_list)
         print(np.mean(tmp), '|', np.sqrt(np.var(tmp)))
-        # loss_file_mean = np.append(loss_file_mean,np.mean(tmp))
-        # loss_file_sigma = np.append(loss_file_sigma,np.sqrt(np.var(tmp)))
 
         eval(model, validdataloader)
         loss_list = []
-
-# train_batch_size, valid_batch_size = sys.argv[1:]
-# train_batch_size = int(train_batch_size)
-# valid_batch_size = int(valid_batch_size)
 
 
 train_batch_size, valid_batch_size, max_epoch = [int(i) for i in sys.argv[1:]]
@@ -206,7 +194,7 @@ train_dataloader = DataLoader(
     train_dataset, batch_size=train_batch_size, shuffle=True)
 valid_dataloader = DataLoader(
     valid_dataset, batch_size=valid_batch_size, shuffle=False)
-
+# 加载模型
 model = gauss_model()
 if os.path.exists(param_save_path):
     print('loading param')
@@ -223,7 +211,7 @@ else:
     start_epoch = 0
     end_epoch = start_epoch + max_epoch
 
-
+# 开始训练
 train(model, optimizer, train_dataloader,
       valid_dataloader, max_epoch, start_epoch)
 # eval(model,valid_dataloader)
