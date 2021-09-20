@@ -31,7 +31,7 @@ if __name__ == '__main__':
 
     model.eval()
 
-    # b = np.load("final.npy")
+    # 读取生成的数据
     b1 = np.load("data/finaltest_npy/final_0_5000_retry.npy")
     b2 = np.load("data/finaltest_npy/final_5000_10000_retry.npy")
     b3 = np.load("data/finaltest_npy/final_10000_15000_retry.npy")
@@ -46,7 +46,7 @@ if __name__ == '__main__':
     b = b1+b2+b3+b4+b5+b6+b7+b8+b9+b10
     # b = (b/2 + np.roll(b/2, -1, axis=0))
     b = torch.Tensor(b/b.sum()*255).cuda().unsqueeze(0).unsqueeze(0)
-
+    #计算最终结果
     answer = model(b)
     print(answer)
 

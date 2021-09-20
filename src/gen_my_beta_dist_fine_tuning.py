@@ -87,28 +87,31 @@ def gen_my_beta_dist(index, total_len=200):
     label_list = []
     pic_list = []
     for j in tqdm(range(total_len)):
+        # 生成beta分布
         beta1 = [0.5]
         for i in range(12):
             beta1.append(gen_random(mu1[i], sigma1[i], limit1[i]))
         beta2 = [0.5]
         for i in range(12):
             beta2.append(gen_random(mu2[i], sigma2[i], limit2[i]))
-        r1 = np.random.uniform(0.45, 0.55)
-        r2 = np.random.uniform(0.75, 0.85)
+        r1 = np.random.uniform(0.47, 0.53)
+        r2 = np.random.uniform(0.77, 0.83)
 
         r = np.array([r1,r2], dtype=np.float64)
         label = np.array([beta1[1:], beta2[1:]], dtype=np.float64)
 
-
+        # 生成图片
         pic1 = gen_my_pic_double.gen_pic(
-            beta1, r[0], np.random.uniform(0.005, 0.009))
+            beta1, r[0], np.random.uniform(0.008, 0.013))
         pic2 = gen_my_pic_double.gen_pic(
-            beta2, r[1], np.random.uniform(0.005, 0.009))
-        pic = (pic1+pic2)/2
+            beta2, r[1], np.random.uniform(0.008, 0.013))
+        pic = (pic1+pic2)
+        pic = pic/pic.sum()*255
 
         r_list.append(r)
         label_list.append(label)
         pic_list.append(pic)
+    # 保存
     with h5py.File((output_path+output_name).format(index), 'w') as out:
         out['inputs'] = pic_list
         out['Rs'] = r_list

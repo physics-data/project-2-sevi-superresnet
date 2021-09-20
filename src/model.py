@@ -4,6 +4,7 @@ import os
 import torch
 
 def get_model(model_idx,param_save_path,learning_rate=0.1,max_epoch=1):
+    '''获取模型,并加载模型参数'''
     model_dict = {
         18: resnet18,
         34: resnet34,
@@ -34,4 +35,5 @@ def get_model(model_idx,param_save_path,learning_rate=0.1,max_epoch=1):
     return model,optimizer,start_epoch,end_epoch
 
 def save_model(state, param_save_path):
+    '''保存模型参数'''
     torch.save(state, param_save_path)

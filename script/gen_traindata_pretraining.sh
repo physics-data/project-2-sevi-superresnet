@@ -1,3 +1,4 @@
+#!/usr/bin/bash
 echo "生成训练集"
 for i in `seq 0 9`
 do

@@ -6,6 +6,7 @@ from torch.utils.data import Dataset, DataLoader
 
 
 class sevi_dataset(Dataset):
+    '''sevi数据集'''
     def __init__(self, inputs, labels):
         print("preparing dataset")
         self.inputs = torch.Tensor(inputs)
@@ -30,6 +31,7 @@ class sevi_dataset(Dataset):
             self.tensor[key] = self.tensor[key].cpu()
 
 class gauss_dataset(Dataset):
+    '''高斯光斑数据集'''
     def __init__(self, inputs, labels):
         print("preparing dataset")
         self.inputs = torch.Tensor(inputs).unsqueeze(1)
@@ -58,6 +60,7 @@ class gauss_dataset(Dataset):
 
 
 def get_dataname(data_path=r'./data/traindata/'):
+    '''获取训练集文件名'''
     assert os.path.exists(data_path), "训练集不存在"
     dataname = list(os.listdir(data_path))
     assert len(dataname) >= 3, "训练集不存在或过短"
@@ -91,7 +94,7 @@ def get_dataset(traindata_path, validdata_path, train_data_names, valid_data_nam
 
 
 def get_dataloader(train_batch_size=8, valid_batch_size=5, traindata_path=r'./data/traindata/', validdata_path=r'./data/validdata/'):
-
+    '''返回dataloader'''
     traindata_names = get_dataname(traindata_path)
     validdata_names = get_dataname(validdata_path)
     inputs_train, labels_train, inputs_valid, labels_valid = get_dataset(
