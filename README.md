@@ -46,22 +46,17 @@
 
 ## 环境
 
-- 由于A100显卡需要的pytorch版本过高, 为了复现方便, 我们在自己的笔记本上进行了尝试(GPU:mx250), **建议使用环境**:
+- **建议使用环境**:
 
     ```shell
     conda env create -f environment.yaml
     ```
-- 也可以使用A100环境(可能有部分缺少的pip环境, 需要自行安装):
+- 也可以使用pyorch11环境(可能有部分缺少的pip环境, 需要自行安装):
     ```shell
-    conda env create -f environment_A100.yaml
+    conda env create -f environment_11.yaml
     ```
     
-    
-- 我们的设备：
 
-    GPU: A100-SXM4-40GB 
-
-    CPU: AMD EPYC 7302 16-Core Processor
 
 ## 根据训练好的模型&处理好的结果计算答案
 1. [下载](https://cloud.tsinghua.edu.cn/f/436363d4b6e946e7844c/)模型参数, 创建并放于`param/`目录下:
@@ -463,13 +458,6 @@ resnet34,101:
 100个epoch不能看出明显下降, 故放弃训练
 
 
-### 设备信息
-
-显卡: A100-SXM4-40GB 
-
-Cpu: AMD EPYC 7302 16-Core Processor
-
-训练时长: > 1min/epoch
 
 ### 评估
 
